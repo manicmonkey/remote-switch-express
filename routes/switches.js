@@ -67,7 +67,6 @@ router.post('/', function(req, res, next) {
     'switch' : req.body.switch
   }
   insertSwitch(newSwitch)
-//  switches.push(newSwitch)
   res.sendStatus(204)
 });
 
