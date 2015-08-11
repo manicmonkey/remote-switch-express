@@ -28,6 +28,17 @@ function insertSwitch(aSwitch) {
   })
 }
 
+router.param('switch', function(req, res, next, switchName) {
+  console.log('Loading switch from database')
+  getSwitch(switchName, function(err, existingSwitch) {
+    if (err) {
+      return next(err)
+    }
+    req.switch = existingSwitch
+    next()
+  })
+})
+
 function getSwitch(name, callback) {
   withDatabase(function(err, db) {
     if (err)
@@ -78,24 +89,17 @@ router.post('/', function(req, res, next) {
   res.sendStatus(204)
 });
 
-router.patch('/:name', function(req, res, next) {
-  var switchName = req.params.name
-  console.log('Patching [' + switchName + ']')
-  var switchOn = req.body.on
+router.patch('/:switch', function(req, res, next) {
   console.dir(req.body)
-  console.log('Switch on [' + switchOn + ']')
-  getSwitch(switchName, function(err, existingSwitch) {
-    if (err)
-      return console.err(err)
-    console.log('Working on switch: ' + existingSwitch)
-    if (switchOn) {
-      console.log('Switching on group[' + existingSwitch.group + '] switch[' + existingSwitch.switch + ']')
-      rcswitch.switchOn(existingSwitch.group, Number(existingSwitch.switch))
-    } else {
-      console.log('Switching off')
-      rcswitch.switchOff(existingSwitch.group, Number(existingSwitch.switch))
-    }
-  })
+  var existingSwitch = req.switch
+  var switchOn = req.body.on
+  console.log('Switch [' + existingSwitch.name + '] on [' + switchOn + ']')
+  console.dir(existingSwitch)
+  if (switchOn) {
+    rcswitch.switchOn(existingSwitch.group, Number(existingSwitch.switch))
+  } else {
+    rcswitch.switchOff(existingSwitch.group, Number(existingSwitch.switch))
+  }
   res.sendStatus(204)
 });
 
