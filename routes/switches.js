@@ -1,15 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-var switches = [{
-      'name' : 'light',
-      'group' : '11111',
-      'switch' : 1
-    }, {
-      'name' : 'chair',
-      'group' : '11111',
-      'switch' : 2
-    }]
+var rcswitch = require('rcswitch');
+var rcswitchDataPin = 0;
+var canTransmit = rcswitch.enableTransmit(rcswitchDataPin)
+console.log('Can transmit: ' + canTransmit)
 
 var MongoClient = require('mongodb').MongoClient
 var url = 'mongodb://localhost:27017/switch-server'
@@ -30,6 +25,19 @@ function insertSwitch(aSwitch) {
     var collection = db.collection('switches')
     collection.insert(aSwitch)
     db.close()
+  })
+}
+
+function getSwitch(name, callback) {
+  withDatabase(function(err, db) {
+    if (err)
+      return callback(err)
+    var collection = db.collection('switches')
+    collection.findOne({'name' : name}, {}, function(err, existingSwitch) {
+      console.log('Got switch ' + existingSwitch)
+      callback(null, existingSwitch)
+      db.close()
+    })
   })
 }
 
@@ -67,6 +75,27 @@ router.post('/', function(req, res, next) {
     'switch' : req.body.switch
   }
   insertSwitch(newSwitch)
+  res.sendStatus(204)
+});
+
+router.patch('/:name', function(req, res, next) {
+  var switchName = req.params.name
+  console.log('Patching [' + switchName + ']')
+  var switchOn = req.body.on
+  console.dir(req.body)
+  console.log('Switch on [' + switchOn + ']')
+  getSwitch(switchName, function(err, existingSwitch) {
+    if (err)
+      return console.err(err)
+    console.log('Working on switch: ' + existingSwitch)
+    if (switchOn) {
+      console.log('Switching on group[' + existingSwitch.group + '] switch[' + existingSwitch.switch + ']')
+      rcswitch.switchOn(existingSwitch.group, Number(existingSwitch.switch))
+    } else {
+      console.log('Switching off')
+      rcswitch.switchOff(existingSwitch.group, Number(existingSwitch.switch))
+    }
+  })
   res.sendStatus(204)
 });
 
