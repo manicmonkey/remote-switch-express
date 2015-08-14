@@ -1,0 +1,63 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to switch management
+  ul 
+    each val in switches
+      li= val.name
+  div.container
+    div.row
+      div.col-md-12
+    table.table
+      if switches
+        tr
+          th: p Name
+          th: p Group
+          th: p Switch
+          th
+      each val in switches
+        tr
+          td: p= val.name
+          td: p= val.group
+          td: p= val.switch
+          td: button.btn.btn-primary Edit
+  script.
+    function edit(name) {
+      $.ajaxSetup({
+        headers: {
+          Accept: 'application/json'
+        }
+      })
+      $.ajax({
+        url: '/switches/' + name,
+        success: function(data) {
+          $('#inputName').val(name)
+          $('#inputGroup').val(data.group)
+        }
+      })
+    }            
+  div.container
+    if switches
+      div.row
+        div.col-md-3: p Name
+        div.col-md-3: p Group
+        div.col-md-3: p Switch
+        div.col-md-3
+    each val in switches
+      div.row
+        div.col-md-3: p= val.name
+        div.col-md-3: p= val.group
+        div.col-md-3: p= val.switch
+        div.col-md-3: button.btn.btn-primary(onclick="edit('#{val.name}')") Edit
+  br
+  form.form-horizontal
+    div.form-group
+      label.col-sm-2.control-label(for='inputName') Name
+      div.col-md-6
+        input.form-control#inputName(type='text', placeholder='Name')
+  form.form-horizontal
+    div.form-group
+      label.col-sm-2.control-label(for='inputGroup') Group
+      div.col-md-6
+        input.form-control#inputGroup(type='text', placeholder='Group')
