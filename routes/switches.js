@@ -7,9 +7,8 @@ var switchService = require('../services/switchService.js')
 router.param('switch', function(req, res, next, switchName) {
   console.log('Loading switch from database')
   switchDao.getOne(switchName, function(err, existingSwitch) {
-    if (err) {
+    if (err)
       return next(err)
-    }
     req.switch = existingSwitch
     next()
   })
@@ -23,6 +22,17 @@ router.post('/', function(req, res, next) {
   }
   switchDao.create(newSwitch)
   res.sendStatus(204)
+})
+
+router.post('/:switch', function(req, res, next) {
+  req.switch.name = req.body.name
+  req.switch.group = req.body.group
+  req.switch.switch = req.body.switch
+  switchDao.update(req.switch, function(err) {
+    if (err)
+      return next(err)
+    res.sendStatus(204)
+  })
 })
 
 router.get('/', function(req, res, next) {

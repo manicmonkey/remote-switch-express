@@ -48,5 +48,15 @@ module.exports = {
         db.close()
       })
     })
+  },
+
+  update: function(existingSwitch, callback) {
+    withDatabase(function(err, db) {
+      if (err) return callback(err)
+      var collection = db.collection('switches')
+      collection.update({_id: existingSwitch._id}, existingSwitch)
+      callback(null)
+      db.close()
+    })
   }
 }

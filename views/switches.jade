@@ -15,42 +15,53 @@ block content
         success: function(data) {
           $('#inputName').val(name)
           $('#inputGroup').val(data.group)
-          $('inputSwitch').val(data.switch)
-          $('#editForm').css('visibility', 'visible')
+          $('#inputSwitch').val(data.switch)
+          $('#editForm').css('visibility', 'visible').attr('action', '/switches/' + name)
         }
       })
-    }            
+    }
+    function save() {
+      $('#editForm').submit()
+    }
+    function remove(name) {
+      $.ajax({
+        method: 'DELETE',
+        url: '/switches/' + name
+      })
+    }
   div.container
     if switches
       div.row
-        div.col-md-3: p Name
-        div.col-md-3: p Group
-        div.col-md-3: p Switch
+        div.col-md-3: strong Name
+        div.col-md-3: strong Group
+        div.col-md-3: strong Switch
         div.col-md-3
     each val in switches
       div.row
         div.col-md-3: p= val.name
         div.col-md-3: p= val.group
         div.col-md-3: p= val.switch
-        div.col-md-3: button.btn.btn-primary(onclick="edit('#{val.name}')") Edit
+        div.col-md-3
+          button.btn.btn-primary(onclick="edit('#{val.name}')") Edit
+          button.btn.btn-danger(onclick="remove('#{val.name}')") Delete
   br
-  form.form-horizontal#editForm(style='visibility:hidden')
+  form.form-horizontal#editForm(style='visibility:hidden', method='POST')
     div.form-group
       label.col-sm-2.control-label(for='inputName') Name
-      div.col-md-6
-        input.form-control#inputName(type='text', placeholder='Name')
+      div.col-md-2
+        input.form-control#inputName(name="name", type='text', placeholder='Name')
     div.form-group
       label.col-sm-2.control-label(for='inputGroup') Group
-      div.col-md-6
-        input.form-control#inputGroup(type='text', placeholder='Group')
+      div.col-md-2
+        input.form-control#inputGroup(name="group", type='text', placeholder='Group')
     div.form-group
       label.col-sm-2.control-label(for='inputSwitch') Switch
-      div.col-md-6
-        select.form-control
+      div.col-md-2
+        select.form-control#inputSwitch(name="switch")
           option 1
           option 2
           option 3
           option 4
     div.form-group
       div.col-md-offset-2.col-md-4
-        button.btn.btn-primary Save  
+        button.btn.btn-primary(onclick="save()") Save  
