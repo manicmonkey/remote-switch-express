@@ -31,6 +31,10 @@ router.post('/:switch', function(req, res, next) {
   switchDao.update(req.switch, function(err) {
     if (err)
       return next(err)
+    if (req.accepts("html")) {
+      res.redirect('/switches?updated=main')
+      return;
+    }
     res.sendStatus(204)
   })
 })
@@ -43,7 +47,7 @@ router.get('/', function(req, res, next) {
     }
 
     if (req.accepts('html')) {
-      res.render('switches', { title: 'Switch listing', switches: switches })
+      res.render('switches', { title: 'Switch listing', switches: switches, updated: req.query.updated })
       return
     }
 
