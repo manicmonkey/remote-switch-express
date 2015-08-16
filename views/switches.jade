@@ -31,23 +31,22 @@ block content
     }
   if updated
     div.row
-      div.col-md-2
-        p.bg-success Updated switch '#{updated}'
-  div.container
-    if switches
-      div.row
-        div.col-md-3: strong Name
-        div.col-md-3: strong Group
-        div.col-md-3: strong Switch
-        div.col-md-3
-    each val in switches
-      div.row
-        div.col-md-3: p= val.name
-        div.col-md-3: p= val.group
-        div.col-md-3: p= val.switch
-        div.col-md-3
-          button.btn.btn-primary(onclick="edit('#{val.name}')") Edit
-          button.btn.btn-danger(onclick="remove('#{val.name}')") Delete
+      div.col-md-9
+        p.pull-left.alert.alert-success Updated switch '#{updated}'
+  if switches
+    div.row
+      div.col-md-3: strong Name
+      div.col-md-3: strong Group
+      div.col-md-3: strong Switch
+      div.col-md-3
+  each val in switches
+    div.row
+      div.col-md-3: p= val.name
+      div.col-md-3: p= val.group
+      div.col-md-3: p= val.switch
+      div.col-md-3
+        button.btn.btn-primary(onclick="edit('#{val.name}')") Edit
+        button.btn.btn-danger(onclick="remove('#{val.name}')") Delete
   br
   form.form-horizontal#editForm(style='visibility:hidden', method='POST')
     div.form-group
