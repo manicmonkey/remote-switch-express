@@ -1,38 +1,63 @@
 extends layout
 
+block head
+  script.
+    function create() {
+      $('#inputName').val('')
+      $('#inputGroup').val('')
+      $('#inputSwitch').val(1)
+      $('#switchForm')
+        .css('visibility', 'visible')
+        .attr('action', '/switches/create')
+    }
+    function update(name, group, switchNumber) {
+      $('#inputName').val(name)
+      $('#inputGroup').val(group)
+      $('#inputSwitch').val(switchNumber)
+      $('#switchForm')
+        .css('visibility', 'visible')
+        .attr('action', '/switches/update/' + name)
+    }
+    function erase(name) {
+      var form = $('<form>', {
+        action: '/switches/delete/' + name,
+        method: 'POST'
+      })
+      form.appendTo(document.body).submit()
+    }
+    function switchOn(name) {
+      $('<form>', {
+        action: '/switches/switchOn/' + name,
+        method: 'POST'
+      }).appendTo(document.body).submit()
+    }
+    function switchOff(name) {
+      $('<form>', {
+        action: '/switches/switchOff/' + name,
+        method: 'POST'
+      }).appendTo(document.body).submit()
+    }
+    function submitForm() {
+      $('#switchForm').submit()
+    }
+
 block content
   h1= title
   p Welcome to switch management
-  script.
-    function edit(name) {
-      $.ajaxSetup({
-        headers: {
-          Accept: 'application/json'
-        }
-      })
-      $.ajax({
-        url: '/switches/' + name,
-        success: function(data) {
-          $('#inputName').val(name)
-          $('#inputGroup').val(data.group)
-          $('#inputSwitch').val(data.switch)
-          $('#editForm').css('visibility', 'visible').attr('action', '/switches/' + name)
-        }
-      })
-    }
-    function save() {
-      $('#editForm').submit()
-    }
-    function remove(name) {
-      $.ajax({
-        method: 'DELETE',
-        url: '/switches/' + name
-      })
-    }
-  if updated
-    div.row
-      div.col-md-9
-        p.pull-left.alert.alert-success Updated switch '#{updated}'
+
+  mixin notification(verb)
+    if switchName
+      .row
+        .col-md-9
+          p.pull-left.alert.alert-success #{verb} switch '#{switchName}'
+
+  case action
+    when "created": +notification('Created')
+    when "updated": +notification('Updated')
+    when "deleted": +notification('Deleted')
+    when "switchedon": +notification('Switched on')
+    when "switchedoff": +notification('Switched off')
+  
   if switches
     div.row
       div.col-md-3: strong Name
@@ -46,9 +71,13 @@ block content
       div.col-md-3: p= val.switch
       div.col-md-3
         button.btn.btn-primary(onclick="edit('#{val.name}')") Edit
-        button.btn.btn-danger(onclick="remove('#{val.name}')") Delete
+        button.btn.btn-danger(onclick="erase('#{val.name}')") Delete
   br
-  form.form-horizontal#editForm(style='visibility:hidden', method='POST')
+  div.row
+    div.col-md-offset-9.col-md-3: button.btn.btn-primary(onclick="create()") New
+  br
+  
+  form.form-horizontal#switchForm(style='visibility:hidden', method='POST')
     div.form-group
       label.col-sm-2.control-label(for='inputName') Name
       div.col-md-2
@@ -67,4 +96,4 @@ block content
           option 4
     div.form-group
       div.col-md-offset-2.col-md-4
-        button.btn.btn-primary(onclick="save()") Save  
+        button.btn.btn-primary(onclick="submitForm()") Save  

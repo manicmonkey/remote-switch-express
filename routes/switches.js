@@ -10,85 +10,68 @@ router.param('switch', function(req, res, next, switchName) {
     if (err)
       return next(err)
     req.switch = existingSwitch
-    next()
+    console.log('Got switch [' + existingSwitch.name + ']')
+    next() //request stalls without this
   })
 })
 
-router.post('/', function(req, res, next) {
+router.post('/create', function(req, res, next) {
   var newSwitch = {
     name: req.body.name,
     group : req.body.group,
     'switch' : req.body.switch
   }
   switchDao.create(newSwitch)
-  res.sendStatus(204)
+  res.redirect('/switches?action=created&switch=' + req.body.name)
 })
 
-router.post('/:switch', function(req, res, next) {
+router.post('/update/:switch', function(req, res, next) {
   req.switch.name = req.body.name
   req.switch.group = req.body.group
   req.switch.switch = req.body.switch
   switchDao.update(req.switch, function(err) {
     if (err)
       return next(err)
-    if (req.accepts("html")) {
-      res.redirect('/switches?updated=main')
-      return;
-    }
-    res.sendStatus(204)
+    res.redirect('/switches?action=updated&switch=' + req.body.name)
   })
 })
 
 router.get('/', function(req, res, next) {
   switchDao.getAll(function(err, switches) {
-    if (err) {
-      res.sendStatus(500) //todo send error page
+    if (err)
       return next(err)
-    }
-
-    if (req.accepts('html')) {
-      res.render('switches', { title: 'Switch listing', switches: switches, updated: req.query.updated })
-      return
-    }
-
-    if (req.accepts('json')) {
-      res.send(switches)
-      return
-    }
-
-    res.sendStatus(406)
+    res.render('switches', { title: 'Switch listing', switches: switches, action: req.query.action, switchName: req.query.switch })
   })
 })
 
-router.get('/:switch', function(req, res, next) {
+router.get('/view/:switch', function(req, res, next) {
   console.log('Getting switch')
   console.dir(req.headers)
-  if (req.accepts('html')) {
-    res.render('switch', { title: 'Switch management', name: req.switch.name })
-    return
-  }
-
-  if (req.accepts('json')) {
-    res.send(req.switch)
-    return
-  }
-
-  console.log("Content type not supported")
-  res.sendStatus(406)
+  res.render('switch', { title: 'Switch management', name: req.switch.name })
 })
 
-router.patch('/:switch', function(req, res, next) {
+router.post('/switchOn/:switch', function(req, res, next) {
   console.dir(req.body)
   var existingSwitch = req.switch
-  var switchOn = req.body.on
   console.log('Switch [' + existingSwitch.name + '] on [' + switchOn + ']')
   console.dir(existingSwitch)
-  if (switchOn) {
-    switchService.on(existingSwitch.group, Number(existingSwitch.switch))
-  } else {
-    switchService.off(existingSwitch.group, Number(existingSwitch.switch))
-  }
-  res.sendStatus(204)
-});
+  switchService.on(existingSwitch.group, Number(existingSwitch.switch))
+  res.redirect('/switches?action=switchedon&switch=' + req.switch.name)
+})
+
+router.post('/switchOff/:switch', function(req, res, next) {
+  console.dir(req.body)
+  var existingSwitch = req.switch
+  console.log('Switch [' + existingSwitch.name + '] on [' + switchOn + ']')
+  console.dir(existingSwitch)
+  switchService.off(existingSwitch.group, Number(existingSwitch.switch))
+  res.redirect('/switches?action=switchedoff&switch=' + req.switch.name)
+})
+
+router.post('/delete/:switch', function(req, res, next) {
+  console.log('Deleting [' + req.switch.name + ']')
+  switchDao.remove(req.switch.name)
+  res.redirect('/switches?action=deleted&switch=' + req.switch.name)
+})
 
 module.exports = router;
