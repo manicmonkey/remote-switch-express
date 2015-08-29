@@ -1,6 +1,42 @@
 extends layout
 
+block head
+  script.
+    function switchOn(name) {
+      $('<form>', {
+        action: '/switchOn/' + name,
+        method: 'POST'
+      }).appendTo(document.body).submit()
+    }
+    function switchOff(name) {
+      $('<form>', {
+        action: '/switchOff/' + name,
+        method: 'POST'
+      }).appendTo(document.body).submit()
+    }
+
 block content
   h1= title
-  p Welcome to #{title}
-  a(href='/switches') You should go here...
+  p Welcome to the remote switch server
+  p.pull-right: a.btn.btn-default(href="/admin/") Admin
+
+  mixin notification(verb)
+    if switchName
+      .row
+        .col-md-9
+          p.pull-left.alert.alert-success #{verb} switch '#{switchName}'
+
+  case action
+    when "switchedon": +notification('Switched on')
+    when "switchedoff": +notification('Switched off')
+  
+  if switches
+    div.row
+      div.col-md-3: strong Available switches
+      div.col-md-3
+  each val in switches
+    div.row
+      div.col-md-3: p= val.name
+      div.col-md-3
+        button.btn.btn-success(onclick="switchOn('#{val.name}')") On
+        button.btn.btn-danger(onclick="switchOff('#{val.name}')") Off

@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var switchDao = require('../../dao/switchDao.js')
-var switchService = require('../../services/switchService.js')
+var switchDao = require('../dao/switchDao.js')
+var switchService = require('../services/switchService.js')
 
 router.param('switch', function(req, res, next, switchName) {
   console.log('Loading switch from database')

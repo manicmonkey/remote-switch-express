@@ -8,7 +8,7 @@ block head
       $('#inputSwitch').val(1)
       $('#switchForm')
         .css('visibility', 'visible')
-        .attr('action', '/switches/create')
+        .attr('action', '/admin/create')
     }
     function update(name, group, switchNumber) {
       $('#inputName').val(name)
@@ -16,26 +16,14 @@ block head
       $('#inputSwitch').val(switchNumber)
       $('#switchForm')
         .css('visibility', 'visible')
-        .attr('action', '/switches/update/' + name)
+        .attr('action', '/admin/update/' + name)
     }
     function erase(name) {
       var form = $('<form>', {
-        action: '/switches/delete/' + name,
+        action: '/admin/delete/' + name,
         method: 'POST'
       })
       form.appendTo(document.body).submit()
-    }
-    function switchOn(name) {
-      $('<form>', {
-        action: '/switches/switchOn/' + name,
-        method: 'POST'
-      }).appendTo(document.body).submit()
-    }
-    function switchOff(name) {
-      $('<form>', {
-        action: '/switches/switchOff/' + name,
-        method: 'POST'
-      }).appendTo(document.body).submit()
     }
     function submitForm() {
       $('#switchForm').submit()
@@ -70,7 +58,7 @@ block content
       div.col-md-3: p= val.group
       div.col-md-3: p= val.switch
       div.col-md-3
-        button.btn.btn-primary(onclick="edit('#{val.name}')") Edit
+        button.btn.btn-primary(onclick="update('#{val.name}', '#{val.group}', #{val.switch})") Edit
         button.btn.btn-danger(onclick="erase('#{val.name}')") Delete
   br
   div.row
