@@ -1,0 +1,200 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Remote Switch API
+  description: Control Remote Switches in your home
+  version: "1.0.0"
+# the domain of the service
+host: raspberrypi.local:3000
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /api
+produces:
+  - application/json
+paths:
+  /:
+    get:
+      summary: Switches
+      description: |
+        The Switches endpoint returns information about the Switches within
+        the system. The response includes the display name and communication
+        details for each product.
+      parameters:
+        - name: longitude
+          in: query
+          description: Longitude component of location.
+          required: true
+          type: number
+          format: double
+      tags:
+        - CRUD
+      responses:
+        200:
+          description: An array of switches
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Switch'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Switches
+      description: |
+        The Switches endpoint returns information about the Switches within
+        the system. The response includes the display name and communication
+        details for each product.
+      parameters:
+        - name: longitude
+          in: query
+          description: Longitude component of location.
+          required: true
+          type: number
+          format: double
+      tags:
+        - CRUD
+      responses:
+        200:
+          description: An array of switches
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Switch'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /{name}:
+    get:
+      summary: Switches
+      description: |
+        The Switches endpoint returns information about the Switches within
+        the system. The response includes the display name and communication
+        details for each product.
+      parameters:
+        - name: name
+          in: path
+          description: Longitude component of location.
+          required: true
+          type: string
+      tags:
+        - CRUD
+      responses:
+        200:
+          description: An array of switches
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Switch'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Switches
+      description: |
+        The Switches endpoint returns information about the Switches within
+        the system. The response includes the display name and communication
+        details for each product.
+      parameters:
+        - name: name
+          in: path
+          description: Name of an existing switch
+          required: true
+          type: string
+        - name: existing
+          in: body
+          required: true
+          schema:
+            type: object
+            $ref: '#/definitions/Switch'
+      tags:
+        - CRUD
+      responses:
+        200:
+          description: An array of switches
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Switch'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Switches
+      description: |
+        The Switches endpoint returns information about the Switches within
+        the system. The response includes the display name and communication
+        details for each product.
+      parameters:
+        - name: name
+          in: path
+          description: Longitude component of location.
+          required: true
+          type: number
+          format: double
+      tags:
+        - CRUD
+      responses:
+        200:
+          description: An array of switches
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Switch'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      summary: Switches
+      description: |
+        The Switches endpoint returns information about the Switches within
+        the system. The response includes the display name and communication
+        details for each product.
+      parameters:
+        - name: name
+          in: path
+          description: Longitude component of location.
+          required: true
+          type: number
+          format: double
+      tags:
+        - Execution
+      responses:
+        200:
+          description: An array of switches
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Switch'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Switch:
+    properties:
+      name:
+        type: string
+        description: User readable label for the switch
+      group:
+        type: string
+        description: Group pin for switches (ie 11111)
+      switch:
+        type: number
+        description: Switch number within a group (ie between 1 and 4)
+  Error:
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
