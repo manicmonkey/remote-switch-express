@@ -4,6 +4,13 @@ var router = express.Router();
 var switchDao = require('../dao/switchDao.js');
 var switchService = require('../services/switchService.js');
 
+//enable cors for editor.swagger.io
+router.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://editor.swagger.io");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 router.param('switch', function(req, res, next, switchName) {
   console.log('Loading switch from database');
   switchDao.getOne(switchName, function(err, existingSwitch) {
