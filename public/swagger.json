@@ -1,0 +1,189 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Remote Switch API",
+        "description": "Control Remote Switches in your home.<br/><br/>\nAllows you to define switches and then invoke on/off\nactions by name.<br/><br/>\nSwitches are controlled using rcswitch project. Only Type\nA switches are supported, you can specify name, group\nand switch number.\n",
+        "version": "1.0.0"
+    },
+    "host": "raspberrypi.local:3000",
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/api",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "description": "Get all switches",
+                "tags": [
+                    "CRUD"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of switches",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Switch"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new switch",
+                "parameters": [
+                    {
+                        "name": "new-switch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/Switch"
+                        }
+                    }
+                ],
+                "tags": [
+                    "CRUD"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Switch created"
+                    }
+                }
+            }
+        },
+        "/{name}": {
+            "get": {
+                "description": "Get a named switch",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "Name of an existing switch",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "CRUD"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Information about the named switch",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/Switch"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Update a named switch",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "Name of an existing switch",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "existing-switch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/Switch"
+                        }
+                    }
+                ],
+                "tags": [
+                    "CRUD"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Switch updated"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a named switch",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "Name of existing switch",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "CRUD"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Switch deleted"
+                    }
+                }
+            },
+            "patch": {
+                "description": "Operate a named switch (on or off)",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "Name of existing switch",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "switch-operation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/SwitchAction"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Execution"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Switch operation executed"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Switch": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "User readable label for the switch"
+                },
+                "group": {
+                    "type": "string",
+                    "description": "Group pin for switches (ie 11111)"
+                },
+                "switch": {
+                    "type": "number",
+                    "description": "Switch number within a group (ie between 1 and 4)"
+                }
+            }
+        },
+        "SwitchAction": {
+            "properties": {
+                "on": {
+                    "type": "boolean",
+                    "description": "true to switch on, false to switch off"
+                }
+            }
+        }
+    }
+}
