@@ -11,14 +11,11 @@ router.use(function(req, res, next) {
   next();
 });
 
-router.param('switch', function(req, res, next, switchName) {
-  console.log('Loading switch from database');
-  switchDao.getOne(switchName, function(err, existingSwitch) {
+router.get('/', function(req, res, next) {
+  switchDao.getAll(function(err, switches) {
     if (err)
       return next(err);
-    req.switch = existingSwitch;
-    console.log('Got switch [' + existingSwitch.name + ']');
-    next(); //request stalls without this
+    res.send(switches);
   });
 });
 
@@ -35,6 +32,23 @@ router.post('/', function(req, res, next) {
   });
 });
 
+router.param('switch', function(req, res, next, switchName) {
+  console.log('Loading switch from database');
+  switchDao.getOne(switchName, function(err, existingSwitch) {
+    if (err)
+      return next(err);
+    req.switch = existingSwitch;
+    console.log('Got switch [' + existingSwitch.name + ']');
+    next(); //request stalls without this
+  });
+});
+
+router.get('/:switch', function(req, res, next) {
+  console.log('Getting switch');
+  console.dir(req.headers);
+  res.send(req.switch);
+});
+
 router.post('/:switch', function(req, res, next) {
   req.switch.name = req.body.name;
   req.switch.group = req.body.group;
@@ -46,18 +60,13 @@ router.post('/:switch', function(req, res, next) {
   });
 });
 
-router.get('/', function(req, res, next) {
-  switchDao.getAll(function(err, switches) {
+router.delete('/:switch', function(req, res, next) {
+  console.log('Deleting [' + req.switch.name + ']');
+  switchDao.delete(req.switch.name, function(err) {
     if (err)
-      return next(err);
-    res.send(switches);
-  });
-});
-
-router.get('/:switch', function(req, res, next) {
-  console.log('Getting switch');
-  console.dir(req.headers);
-  res.send(req.switch);
+      return res.next(err);
+    res.sendStatus(204);
+  })
 });
 
 router.patch('/:switch', function(req, res, next) {
@@ -73,15 +82,6 @@ router.patch('/:switch', function(req, res, next) {
     switchService.off(existingSwitch.group, Number(existingSwitch.switch));
   }
   res.sendStatus(204);
-});
-
-router.delete('/:switch', function(req, res, next) {
-  console.log('Deleting [' + req.switch.name + ']');
-  switchDao.delete(req.switch.name, function(err) {
-    if (err)
-      return res.next(err);
-    res.sendStatus(204);
-  })
 });
 
 module.exports = router;
