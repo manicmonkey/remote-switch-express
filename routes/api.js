@@ -12,7 +12,7 @@ router.param('switch', function(req, res, next, switchName) {
     req.switch = existingSwitch;
     console.log('Got switch [' + existingSwitch.name + ']');
     next(); //request stalls without this
-  };)
+  });
 });
 
 router.post('/', function(req, res, next) {
