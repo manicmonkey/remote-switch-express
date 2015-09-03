@@ -23,6 +23,31 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next) {
+  function isAuthenticated(req) {
+    console.log('Authorization header: ' + req.header('Authorization'));
+    try {
+      var base64cred = req.header('Authorization').substring(6);
+      var cred = new Buffer(base64cred, 'base64').toString('binary');
+      console.log('Credentials: ' + cred);
+      var username = cred.substring(0, cred.indexOf(':'));
+      var password = cred.substring(cred.indexOf(':') + 1, cred.length);
+      return username == 'admin' && password == 'password';
+    } catch (e) {
+      console.error('Could not authenticate', e);
+      return false;
+    }
+  }
+  var authenticated = isAuthenticated(req);
+  if (!authenticated) {
+    res.header('WWW-Authenticate', 'Basic realm="You must authenticate"');
+    res.sendStatus(401);
+    return;
+  } else {
+    next();
+  }
+});
+
 app.use('/', index);
 app.use('/admin/', admin);
 app.use('/api', api);
