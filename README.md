@@ -23,6 +23,6 @@ DATA -> Pin 11
 
 # References
 
-I came across [this blog post[(https://blog.codecentric.de/en/2013/03/home-automation-with-angularjs-and-node-js-on-a-raspberry-pi) which does a good job of describing a similar project.
+I came across [this blog post](https://blog.codecentric.de/en/2013/03/home-automation-with-angularjs-and-node-js-on-a-raspberry-pi) which does a good job of describing a similar project.
 
 [This](https://www.raspberrypi.org/documentation/usage/gpio/) is a useful GPIO pin reference.
