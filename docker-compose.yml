@@ -1,0 +1,14 @@
+web:
+  build: .
+  ports: 
+    - "3000:3000"
+  links:
+    - mongodb
+  cap_add:
+    - SYS_RAWIO
+  devices:
+    - "/dev/mem"
+mongodb:
+  image: mongo:3
+
+  

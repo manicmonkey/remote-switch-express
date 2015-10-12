@@ -13,8 +13,11 @@
     "jade": "~1.11.0",
     "mongodb": "^2.0.40",
     "morgan": "~1.6.1",
-    "rcswitch": "^0.1.0",
+    "rcswitch": "^0.2.3",
     "serve-favicon": "~2.3.0",
     "swagger-ui": "^2.1.2"
+  },
+  "devDependencies": {
+    "node-gyp": "^3.0.3"
   }
 }

@@ -1,5 +1,6 @@
 var MongoClient = require('mongodb').MongoClient
-var url = 'mongodb://localhost:27017/switch-server'
+var url = 'mongodb://mongo:27017/switch-server'
+//var url = 'mongodb://localhost:27017/switch-server'
 
 function withDatabase(callback) {
   MongoClient.connect(url, function(err, db) {
@@ -11,6 +12,10 @@ function withDatabase(callback) {
 
 withDatabase(function(err, db) {
   console.log('Creating unique index on switch name')
+  if (err) {
+    console.error(err)
+    return
+  }
   db.collection('switches').createIndex({name: 1}, {unique: true})
 })
 
