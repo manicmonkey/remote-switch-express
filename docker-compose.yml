@@ -3,12 +3,10 @@ web:
   ports: 
     - "3000:3000"
   links:
-    - mongodb
+    - mongo
   cap_add:
     - SYS_RAWIO
   devices:
     - "/dev/mem"
-mongodb:
-  image: mongo:3
-
-  
+mongo:
+  image: manicmonkey/raspbian-mongodb:2.4.10
